@@ -57,13 +57,22 @@ export const CODEX_CONFIG = {
 };
 
 // Gemini (Google) OAuth Configuration (Standard OAuth2)
+// Default client secret matches the public secret from the official Gemini CLI
+// (see https://github.com/google-gemini/gemini-cli/blob/main/packages/core/src/code_assist/oauth2.ts)
+// Only applied when using the default client ID to preserve the helpful error
+// message in gemini.ts for users with custom client IDs.
+const _geminiClientId =
+  process.env.GEMINI_CLI_OAUTH_CLIENT_ID ||
+  process.env.GEMINI_OAUTH_CLIENT_ID ||
+  "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com";
+const _geminiIsDefaultClientId =
+  _geminiClientId === "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com";
 export const GEMINI_CONFIG = {
-  clientId:
-    process.env.GEMINI_CLI_OAUTH_CLIENT_ID ||
-    process.env.GEMINI_OAUTH_CLIENT_ID ||
-    "681255809395-oo8ft2oprdrnp9e3aqf6av3hmdib135j.apps.googleusercontent.com",
+  clientId: _geminiClientId,
   clientSecret:
-    process.env.GEMINI_CLI_OAUTH_CLIENT_SECRET || process.env.GEMINI_OAUTH_CLIENT_SECRET || "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",
+    process.env.GEMINI_CLI_OAUTH_CLIENT_SECRET ||
+    process.env.GEMINI_OAUTH_CLIENT_SECRET ||
+    (_geminiIsDefaultClientId ? "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" : ""),
   authorizeUrl: "https://accounts.google.com/o/oauth2/v2/auth",
   tokenUrl: "https://oauth2.googleapis.com/token",
   userInfoUrl: "https://www.googleapis.com/oauth2/v1/userinfo",
